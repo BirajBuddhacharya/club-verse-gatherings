@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SidebarProvider, Sidebar, SidebarContent, SidebarHeader, SidebarTrigger, SidebarFooter } from "@/components/ui/sidebar";
-import { Calendar, Clock, Home, Plus, User, Users, Settings, LogOut } from "lucide-react";
+import { Calendar, Clock, Home, Plus, User, Users, Settings, LogOut, Info } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import EventDetailsDialog from "@/components/EventDetailsDialog";
 import {
   BarChart,
   Bar,
@@ -26,6 +27,7 @@ const events = [
     date: "June 15, 2025",
     time: "9:00 AM - 5:00 PM",
     location: "Main Hall, Downtown",
+    description: "Our flagship annual technology conference featuring industry leaders, workshops, and networking opportunities.",
     attendees: 120,
     maxAttendees: 200,
     status: "upcoming",
@@ -36,6 +38,7 @@ const events = [
     date: "June 25, 2025",
     time: "6:00 PM - 8:00 PM",
     location: "Tech Hub, East Campus",
+    description: "A beginner-friendly workshop introducing the fundamentals of artificial intelligence and machine learning.",
     attendees: 65,
     maxAttendees: 80,
     status: "upcoming",
@@ -46,6 +49,7 @@ const events = [
     date: "May 10, 2025",
     time: "10:00 AM - 1:00 PM",
     location: "Tech Hub, East Campus",
+    description: "Hands-on workshop covering JavaScript fundamentals and modern development practices.",
     attendees: 42,
     maxAttendees: 50,
     status: "past",
@@ -84,6 +88,17 @@ const analyticsData = [
 
 const BranchDashboard = () => {
   const [activePage, setActivePage] = useState("overview");
+  const [selectedEvent, setSelectedEvent] = useState<any>(null);
+  const [isEventDialogOpen, setIsEventDialogOpen] = useState(false);
+  
+  const handleOpenEventDialog = (event: any) => {
+    setSelectedEvent(event);
+    setIsEventDialogOpen(true);
+  };
+
+  const handleCloseEventDialog = () => {
+    setIsEventDialogOpen(false);
+  };
 
   return (
     <SidebarProvider>
@@ -178,10 +193,12 @@ const BranchDashboard = () => {
             </div>
             <div className="flex items-center gap-4">
               <SidebarTrigger />
-              <Button className="bg-brand-purple hover:bg-brand-purple/90">
-                <Plus className="h-4 w-4 mr-2" />
-                Create Event
-              </Button>
+              <Link to="/create-event">
+                <Button className="bg-brand-purple hover:bg-brand-purple/90">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create Event
+                </Button>
+              </Link>
             </div>
           </div>
 
@@ -282,10 +299,12 @@ const BranchDashboard = () => {
               <div className="space-y-6">
                 <div className="flex justify-between items-center">
                   <h2 className="text-xl font-bold">Events</h2>
-                  <Button className="bg-brand-purple hover:bg-brand-purple/90">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Create Event
-                  </Button>
+                  <Link to="/create-event">
+                    <Button className="bg-brand-purple hover:bg-brand-purple/90">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Create Event
+                    </Button>
+                  </Link>
                 </div>
 
                 <Tabs defaultValue="upcoming">
@@ -320,8 +339,10 @@ const BranchDashboard = () => {
                                   <div className="text-sm text-gray-500">
                                     {event.attendees}/{event.maxAttendees}
                                   </div>
-                                  <Button variant="outline" size="sm">Edit</Button>
-                                  <Button variant="outline" size="sm">Manage</Button>
+                                  <Button variant="outline" size="sm" onClick={() => handleOpenEventDialog(event)}>
+                                    <Info className="h-4 w-4 mr-2" />
+                                    Details
+                                  </Button>
                                 </div>
                               </div>
                             ))}
@@ -355,8 +376,10 @@ const BranchDashboard = () => {
                                   <div className="text-sm text-gray-500">
                                     {event.attendees}/{event.maxAttendees}
                                   </div>
-                                  <Button variant="outline" size="sm">Report</Button>
-                                  <Button variant="outline" size="sm">Clone</Button>
+                                  <Button variant="outline" size="sm" onClick={() => handleOpenEventDialog(event)}>
+                                    <Info className="h-4 w-4 mr-2" />
+                                    Details
+                                  </Button>
                                 </div>
                               </div>
                             ))}
@@ -368,10 +391,12 @@ const BranchDashboard = () => {
                     <Card>
                       <CardContent className="p-6 text-center">
                         <p className="text-gray-500">No draft events found</p>
-                        <Button className="mt-4 bg-brand-purple hover:bg-brand-purple/90">
-                          <Plus className="h-4 w-4 mr-2" />
-                          Create Event
-                        </Button>
+                        <Link to="/create-event">
+                          <Button className="mt-4 bg-brand-purple hover:bg-brand-purple/90">
+                            <Plus className="h-4 w-4 mr-2" />
+                            Create Event
+                          </Button>
+                        </Link>
                       </CardContent>
                     </Card>
                   </TabsContent>
@@ -445,6 +470,15 @@ const BranchDashboard = () => {
             )}
           </div>
         </div>
+        
+        {/* Event Details Dialog */}
+        {selectedEvent && (
+          <EventDetailsDialog 
+            isOpen={isEventDialogOpen} 
+            onClose={handleCloseEventDialog} 
+            event={selectedEvent}
+          />
+        )}
       </div>
     </SidebarProvider>
   );
