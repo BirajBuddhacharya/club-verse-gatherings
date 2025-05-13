@@ -49,8 +49,8 @@ const formSchema = z.object({
   branch: z.string({
     required_error: "Please select a branch",
   }),
-  maxAttendees: z.string().transform((val) => parseInt(val, 10)),
-  price: z.string().transform((val) => parseFloat(val)),
+  maxAttendees: z.coerce.number().int().positive("Attendee count must be a positive number"),
+  price: z.coerce.number().min(0, "Price cannot be negative"),
   isFeatured: z.boolean().default(false),
   image: z.any().optional(),
 });
@@ -69,8 +69,8 @@ const CreateEvent = () => {
       description: "",
       location: "",
       address: "",
-      maxAttendees: "100",
-      price: "0",
+      maxAttendees: 100,
+      price: 0,
       isFeatured: false,
       time: "10:00",
     },
