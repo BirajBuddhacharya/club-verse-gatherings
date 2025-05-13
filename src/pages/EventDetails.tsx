@@ -7,11 +7,27 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, Clock, MapPin, User, Users, Share2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const EventDetails = () => {
   const { id } = useParams<{ id: string }>();
   const { toast } = useToast();
   const [registering, setRegistering] = useState(false);
+  const [attendeesOpen, setAttendeesOpen] = useState(false);
 
   // In a real app, we would fetch event details from an API
   // This is mock data for demonstration
@@ -25,7 +41,14 @@ const EventDetails = () => {
     address: "123 Conference Ave, New York, NY 10001",
     branch: "Technology Branch",
     price: 49.99,
-    attendees: 120,
+    attendees: [
+      { id: 1, name: "John Doe", email: "john@example.com", registeredOn: "May 1, 2025" },
+      { id: 2, name: "Jane Smith", email: "jane@example.com", registeredOn: "May 2, 2025" },
+      { id: 3, name: "Robert Johnson", email: "robert@example.com", registeredOn: "May 3, 2025" },
+      { id: 4, name: "Sarah Williams", email: "sarah@example.com", registeredOn: "May 4, 2025" },
+      { id: 5, name: "Michael Brown", email: "michael@example.com", registeredOn: "May 5, 2025" },
+    ],
+    attendeeCount: 120,
     maxAttendees: 200,
     image: "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
     featured: true,
@@ -102,6 +125,10 @@ const EventDetails = () => {
     });
   };
 
+  const handleViewAttendees = () => {
+    setAttendeesOpen(true);
+  };
+
   if (!event) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -159,7 +186,7 @@ const EventDetails = () => {
                   <div className="flex items-center text-gray-600">
                     <Users className="h-5 w-5 mr-2 text-brand-purple" />
                     <span>
-                      {event.attendees} registered ({event.maxAttendees - event.attendees} spots left)
+                      {event.attendeeCount} registered ({event.maxAttendees - event.attendeeCount} spots left)
                     </span>
                   </div>
                 </div>
@@ -174,6 +201,10 @@ const EventDetails = () => {
                   <Button variant="outline" onClick={handleShare}>
                     <Share2 className="h-4 w-4 mr-2" />
                     Share Event
+                  </Button>
+                  <Button variant="outline" onClick={handleViewAttendees}>
+                    <Users className="h-4 w-4 mr-2" />
+                    View Attendees
                   </Button>
                 </div>
                 <div>
@@ -330,6 +361,38 @@ const EventDetails = () => {
           </Button>
         </div>
       </div>
+
+      {/* Attendees Dialog */}
+      <Dialog open={attendeesOpen} onOpenChange={setAttendeesOpen}>
+        <DialogContent className="sm:max-w-[800px]">
+          <DialogHeader>
+            <DialogTitle>Event Attendees</DialogTitle>
+            <DialogDescription>
+              {event.attendeeCount} people are attending this event
+            </DialogDescription>
+          </DialogHeader>
+          <div className="max-h-[400px] overflow-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Registered On</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {event.attendees.map((attendee) => (
+                  <TableRow key={attendee.id}>
+                    <TableCell className="font-medium">{attendee.name}</TableCell>
+                    <TableCell>{attendee.email}</TableCell>
+                    <TableCell>{attendee.registeredOn}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

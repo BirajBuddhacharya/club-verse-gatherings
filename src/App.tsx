@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import BranchDashboard from "./pages/BranchDashboard";
 import SuperAdminDashboard from "./pages/SuperAdminDashboard";
 import NotFound from "./pages/NotFound";
+import CreateEvent from "./pages/CreateEvent";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/events/:id" element={<EventDetails />} />
           <Route path="/login" element={<Login />} />
           <Route path="/branch-dashboard" element={<BranchDashboard />} />
+          <Route path="/create-event" element={<CreateEvent />} />
           <Route path="/super-admin" element={<SuperAdminDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
